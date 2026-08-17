@@ -35,7 +35,11 @@ export function NewFactForm({ setFacts, setShowForm }) {
         onChange={(e) => setText(e.target.value)}
         disabled={isUploading}
       />
-      <span>{200 - text.length}</span>
+      <span
+        className={`char-counter${text.length > 200 ? " char-counter--over" : ""}`}
+      >
+        {200 - text.length}
+      </span>
       <input
         type="text"
         placeholder="Trustworthy source..."
@@ -55,8 +59,8 @@ export function NewFactForm({ setFacts, setShowForm }) {
           </option>
         ))}
       </select>
-      <button className="btn btn-large" disabled={isUploading}>
-        Post
+      <button className="btn" disabled={isUploading}>
+        {isUploading ? "Posting" : "Post"}
       </button>
     </form>
   );
