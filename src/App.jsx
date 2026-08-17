@@ -6,6 +6,7 @@ import { Header } from "./components/Header";
 import { NewFactForm } from "./components/NewFactForm";
 import { CategoryFilter } from "./components/CategoryFilter";
 import { FactList } from "./components/FactList";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -53,6 +54,7 @@ function App() {
           onAddFact={() => setShowForm(true)}
         />
       </main>
+      <ScrollToTopButton />
     </>
   );
 }
