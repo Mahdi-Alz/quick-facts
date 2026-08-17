@@ -8,3 +8,7 @@ export const CATEGORIES = [
   { name: "history", color: "#f97316" },
   { name: "news", color: "#8b5cf6" },
 ];
+
+export const CATEGORY_COLORS = new Map(
+  CATEGORIES.map((cat) => [cat.name, cat.color]),
+);
