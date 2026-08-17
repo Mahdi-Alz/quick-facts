@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import supabase from "./supabase";
 import "./style.css";
 
@@ -6,36 +6,32 @@ import { Header } from "./components/Header";
 import { NewFactForm } from "./components/NewFactForm";
 import { CategoryFilter } from "./components/CategoryFilter";
 import { FactList } from "./components/FactList";
-import { Loader } from "./components/Loader";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [facts, setFacts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("all");
 
-  useEffect(
-    function () {
-      async function getFacts() {
-        setIsLoading(true);
-        let query = supabase.from("facts").select("*");
-        if (currentCategory !== "all") {
-          query = query.eq("category", currentCategory);
-        }
-        const { data: facts, error } = await query.order("votesInteresting", {
-          ascending: false,
-        });
-        if (!error) setFacts(facts);
-        else
-          alert(
-            "There was a problem getting data :(\nIf you are in Iran please use VPN!",
-          );
-        setIsLoading(false);
-      }
-      getFacts();
-    },
-    [currentCategory],
-  );
+  const fetchFacts = useCallback(async function fetchFacts() {
+    setIsLoading(true);
+    setHasError(false);
+    let query = supabase.from("facts").select("*");
+    if (currentCategory !== "all") {
+      query = query.eq("category", currentCategory);
+    }
+    const { data, error } = await query.order("votesInteresting", {
+      ascending: false,
+    });
+    if (error) setHasError(true);
+    else setFacts(data);
+    setIsLoading(false);
+  }, [currentCategory]);
+
+  useEffect(() => {
+    fetchFacts();
+  }, [fetchFacts]);
 
   return (
     <>
@@ -44,12 +40,18 @@ function App() {
         <NewFactForm setFacts={setFacts} setShowForm={setShowForm} />
       ) : null}
       <main className="main">
-        <CategoryFilter setCurrentCategory={setCurrentCategory} />
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <FactList facts={facts} setFacts={setFacts} />
-        )}
+        <CategoryFilter
+          currentCategory={currentCategory}
+          setCurrentCategory={setCurrentCategory}
+        />
+        <FactList
+          facts={facts}
+          setFacts={setFacts}
+          isLoading={isLoading}
+          hasError={hasError}
+          onRetry={fetchFacts}
+          onAddFact={() => setShowForm(true)}
+        />
       </main>
     </>
   );
