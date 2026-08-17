@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import supabase from "../supabase";
 import { CATEGORIES } from "../constants";
 import { isValidHttpUrl } from "../utils";
@@ -8,6 +8,14 @@ export function NewFactForm({ setFacts, setShowForm }) {
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [text]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -28,18 +36,21 @@ export function NewFactForm({ setFacts, setShowForm }) {
 
   return (
     <form className="fact-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Share a fact with the world..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        disabled={isUploading}
-      />
-      <span
-        className={`char-counter${text.length > 200 ? " char-counter--over" : ""}`}
-      >
-        {200 - text.length}
-      </span>
+      <div className="fact-form__field">
+        <textarea
+          ref={textareaRef}
+          rows={1}
+          placeholder="Share a fact with the world..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          disabled={isUploading}
+        />
+        <span
+          className={`char-counter${text.length > 200 ? " char-counter--over" : ""}`}
+        >
+          {200 - text.length}
+        </span>
+      </div>
       <input
         type="text"
         placeholder="Trustworthy source..."
