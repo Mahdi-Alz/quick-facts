@@ -252,6 +252,9 @@ a {
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
   }
+  .facts-list-wrap {
+    padding-bottom: 40px;
+  }
   .categories::-webkit-scrollbar,
   .facts-list-wrap::-webkit-scrollbar {
     width: 6px;
